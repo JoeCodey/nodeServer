@@ -1,0 +1,16 @@
+{
+  "name": "web-server",
+  "version": "1.0.0",
+  "description": "Backend web server with nodeJS",
+  "main": "server.js",
+  "scripts": {
+    "test": "runbaby",
+    "start": "node server.js"
+  },
+  "author": "Joseph",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "hbs": "^4.0.1"
+  }
+}
