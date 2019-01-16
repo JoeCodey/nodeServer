@@ -1,3 +1,7 @@
 node_modules/
 server.log
 .DS_Store
+gitAPI/reposResponse.JSON 
+gitAPI/reposResponse.log 
+gitAPI/reposResponse.txt
+gitAPI/repos*

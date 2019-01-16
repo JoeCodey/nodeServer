@@ -1,6 +1,7 @@
 const express = require('express');
 const hbs = require('hbs');
 const fs = require('fs') ;
+const gitAPI = require('./gitAPI/gitAPI.js');
 const port = process.env.PORT || 3000 ;
 
 var app = express();
@@ -8,13 +9,15 @@ var app = express();
 app.set('view engine','hbs');
 hbs.registerPartials(__dirname + '/views/partials/')
 
-hbs.registerHelper('getCurrentYear',() =>{
-  return new Date().getFullYear()
+hbs.registerHelper({
+  'getCurrentYear': () =>{
+    return new Date().getFullYear() ;
+   },
+  'screamIt': (text)=>{
+      return text.toUpperCase() ;
+  }
 });
 
-hbs.registerHelper('screamIt',(text)=>{
-  return text.toUpperCase() ;
-});
 
 //Middleware - log requests
 app.use((req,res,next) => {
@@ -51,11 +54,67 @@ app.get('/about',(req,res) =>{
   });
 });
 
+
+//Project Route
+
+app.get('/projects', (req, res) => {
+  var namesOfRepos  = [];
+  var numberRepos = 0 ;
+
+  gitAPI.getListOfRepos(gitAPI.gitUsername).then((response)=>{
+    // console.log(response) ;
+
+    for(let i = 0; i < response.data.length ; i ++){
+      console.log(response.data[i]);
+      namesOfRepos.push(response.data[i].name) ;
+    }
+    //console.log(JSON.stringify(response.data,undefined,2)) ;
+  //   fs.writeFile('reposResponse.log',response.data, (err) =>{
+  //   if(err){
+  //     console.log('Unable to append to log');
+  //   }
+  // });
+    //console.log(namesOfRepos.toString()) ;
+    var numberRepos = namesOfRepos.length ;
+
+    if(numberRepos === 0){
+      throw new Error('No projects found') ;
+    }
+    console.log("From ./GitApi: "+namesOfRepos.toString()+numberRepos) ;
+
+    //Render Webpage with all projects found from github API
+    res.render('projectPage.hbs',
+    {
+      Projects: 'Projects' ,
+      numberProjects: numberRepos ,
+      projectList: namesOfRepos
+    }) ;
+  }).catch((e)=>{
+    res.render('projectPage.hbs',
+    {
+      Projects: 'Projects' ,
+      numberProjects: 'No project found on github :(' ,
+      projectList: namesOfRepos
+    }) ;
+    console.log(e.message)
+  });
+
+
+
+//  var numProjects = listProjects.length ; // Lets assume 3, (*Ideal we could retrieve # from github)
+
+  //console.log("From ./GitApi: "+listProjects.toString()+numProjects.toString()) ;
+
+
+});
+
 app.get('/bad', (req, res)=>{
   res.send({
     errorMessage: 'Unable to handle request'
   })
 })
+
+
 
 
 app.listen(port, ()=>{

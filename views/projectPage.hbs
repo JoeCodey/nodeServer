@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>{{Projects}}</title>
+  </head>
+  <body>
+    {{> header}}
+    <hr>
+    <h2>Projects</h1>
+      <ul>
+        <p>Total number projects:{{numberProjects}}</p>
+        {{#each projectList}}
+          <li>{{this}}</li>
+        {{/each}}
+
+      </ul>
+
+  </body>
+</html>
